@@ -1,25 +1,21 @@
-import logo from './logo.svg';
-import './App.css';
+import SearchApp from "./componets/body/searcher/SearchApp";
+import Menu from "./componets/header/Menu";
+import ServiceNote from "./componets/body/serviceNote/ServiceNote";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import AllServices from "./componets/body/serviceNote/AllServices";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <BrowserRouter>
+        <Menu/>
+        <Routes>
+          <Route path="elevator_app" element={<SearchApp />} />
+          <Route path="elevator_app/serviceNote" element={<ServiceNote />} />
+          <Route path="elevator_app/allServices" element={<AllServices />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
-
 export default App;

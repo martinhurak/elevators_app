@@ -1,0 +1,37 @@
+/*accordion-header custom */ 
+.not-complete .accordion-button:not(.collapsed) {
+    color: #000000;
+    background-color: #FAAB01;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
+}
+
+.not-complete .accordion-button {
+    color: #000000;
+    background-color: #FAD074;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
+}
+
+.complete .accordion-button:not(.collapsed) {
+    color: #000000;
+    background-color: #007E33;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
+}
+
+.complete .accordion-button {
+    color: #000000;
+    background-color: #03a544;
+    box-shadow: inset 0 -1px 0 rgb(0 0 0 / 13%);
+}
+
+/*accordion-body custom*/ 
+.complete ,.accordion-collapse {
+    background-color: #03a544;
+}
+.not-complete ,.accordion-collapse{
+    background-color: #FEE3A2;
+}
+
+/*accordion button custom */ 
+.accordion-button:not(.collapsed)::after{
+    background-image: var(--bs-accordion-btn-icon);
+}
