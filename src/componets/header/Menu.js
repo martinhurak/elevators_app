@@ -39,7 +39,7 @@ function Menu() {
                     title="Služba"
                     id={`offcanvasNavbarDropdown-expand-${"md"}`}
                   >
-                    <NavDropdown.Item onClick={()=> setOffCanvasMenu(false)} as={Link} to="elevator_app/serviceNote"> Pridaj zázanam </NavDropdown.Item>
+                    <NavDropdown.Item onClick={()=> setOffCanvasMenu(false)} as={Link} state={{title: "Pridaj záznam" ,isEdited:false}} to="elevator_app/serviceNote"> Pridaj zázanam </NavDropdown.Item>
                     <NavDropdown.Item onClick={()=> setOffCanvasMenu(false)} as={Link} to="elevator_app/allServices"> Zobraz zaznamy </NavDropdown.Item>
 
                   </NavDropdown>   

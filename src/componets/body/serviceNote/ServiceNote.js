@@ -1,14 +1,16 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Container, Stack } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { db } from "../../../firebase";
-import { ref, set } from "firebase/database";
+import { ref, remove, set, update } from "firebase/database";
 import { uid } from "uid";
 import SetModal from "./notices/modal";
 import SendDataNotification from "./notices/sendDataNotification";
+import { useLocation } from "react-router-dom";
+import "./newService.css";
 
 function ServiceNote() {
   // Get the current date and time
@@ -16,8 +18,20 @@ function ServiceNote() {
   const date = now.toLocaleDateString();
   const time = now.toLocaleTimeString();
 
-  // Define initial state for the service data object
-  const emptyServiceData = {
+  // Get data to edited
+  const location = useLocation();
+  const { id, name, street, problem, notes, isEdited, isCompleted } =
+    location.state;
+  // Define initial state
+  const updatedData = {
+    id: id,
+    name: name,
+    street: street,
+    problem: problem,
+    notes: notes,
+    isCompleted: isCompleted,
+  };
+  const initialServiceData = {
     id: "",
     name: "",
     street: "",
@@ -27,8 +41,20 @@ function ServiceNote() {
     dateAdded: date,
     timeAdded: time,
   };
+
   // Use state hook to manage the service data object
-  const [newService, setNewService] = useState(emptyServiceData);
+  const [newService, setNewService] = useState(initialServiceData);
+
+  //Set initial state based on user input
+  useEffect(() => {
+    if (isEdited === true) {
+      setNewService(updatedData);
+    } else {
+      setNewService(initialServiceData);
+    }
+    // eslint-disable-next-line
+  }, [isEdited]);
+
   // Use ref hook to track whether any required inputs are empty
   const buttonIsActive = useRef(false);
   // Function to check whether any required inputs are empty
@@ -52,7 +78,14 @@ function ServiceNote() {
   function handleInput(event) {
     const name = event.target.name;
     const value = event.target.value;
-    setNewService((oldVal) => ({ ...oldVal, [name]: value }));
+    const type = event.target.type;
+    const checked = event.target.checked;
+
+    setNewService((oldVal) =>
+      type === "checkbox"
+        ? { ...oldVal, isCompleted: checked }
+        : { ...oldVal, [name]: value }
+    );
   }
 
   // set validation message
@@ -73,7 +106,7 @@ function ServiceNote() {
           show: true,
           isSuccess: true,
         });
-        setNewService(emptyServiceData);
+        setNewService(initialServiceData);
       })
       // If the write fails, log the error and show an error notification
       .catch((error) => {
@@ -84,6 +117,39 @@ function ServiceNote() {
         });
       });
   };
+  // Function to Update the service data to the database
+  const UpdateToDatabase = () => {
+    update(ref(db, `newTask/${updatedData.id}`), {
+      ...newService,
+    })
+      .then(() => {
+        // If the update succeeds, show a success notification and reset the form
+        setDataNotification({
+          show: true,
+          isSuccess: true,
+        });
+      })
+      // If the update fails, log the error and show an error notification
+      .catch((error) => {
+        console.log("Error writing data to the database: ", error);
+        setDataNotification({
+          show: true,
+          isSuccess: false,
+        });
+      });
+  };
+
+  //delete datebase
+  const [isDeleted, setIsDeleted] = useState(false);
+  const setDeleteModal = () => {
+    setIsDeleted(true);
+    setModalShow(true);
+  };
+
+  const handleDelete = () => {
+    remove(ref(db, `newTask/${updatedData.id}`));
+  };
+
   // Use state hook to manage the modal for validation errors
   const [modalShow, setModalShow] = useState(false);
   // Use state hook to manage form validation status
@@ -100,15 +166,18 @@ function ServiceNote() {
     }
     // If all inputs are valid, write the data to the database and reset the form
     if (form.checkValidity() === true) {
-      writeToDatabase();
+      isEdited ? UpdateToDatabase() : writeToDatabase();
       setValidated(false);
     }
   };
+
   return (
     <>
       <Container>
         <Stack gap={3}>
-          <h2 className="mx-auto">Pridaj záznam</h2>
+          <h2 className="mx-auto">
+            {isEdited ? "Zmena záznamu" : "Pridaj záznam"}{" "}
+          </h2>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
             <Row className="mb-3">
               <Form.Group as={Col} md="6">
@@ -160,9 +229,36 @@ function ServiceNote() {
                 placeholder="poznamka k oprave..."
               />
             </Form.Group>
-            <Button type="submit" disabled={buttonIsActive.current}>
-              Pridaj ulohu
-            </Button>
+            <Form.Check
+              type="switch"
+              checked={newService.isCompleted}
+              label={newService.isCompleted ? "Splnene" : "V spracovani"}
+              onChange={(event) => handleInput(event)}
+            />
+
+            <Row>
+              <Col>
+                <Button
+                  style={{ width: "100%" }}
+                  type="submit"
+                  disabled={buttonIsActive.current}
+                >
+                  {isEdited ? "Uprav" : "Pridaj záznam"}
+                </Button>
+              </Col>
+
+              {isEdited && (
+                <Col>
+                  <Button
+                    onClick={() => setDeleteModal()}
+                    style={{ width: "100%" }}
+                    variant="danger"
+                  >
+                    vymaž záznam
+                  </Button>
+                </Col>
+              )}
+            </Row>
           </Form>
         </Stack>
       </Container>
@@ -170,8 +266,11 @@ function ServiceNote() {
       <SetModal
         setValidated={() => setValidated()}
         show={modalShow}
-        sendData={() => writeToDatabase()}
+        sendData={() => (isEdited ? UpdateToDatabase() : writeToDatabase())}
         onHide={() => setModalShow(false)}
+        isDeleted={isDeleted}
+        setIsDeleted={() => setIsDeleted()}
+        handleDelete={() => handleDelete()}
       />
       <SendDataNotification
         show={dataNotification.show}
@@ -183,3 +282,5 @@ function ServiceNote() {
 }
 
 export default ServiceNote;
+
+/// mam bug že možem ososlať prazdny formular po uprave

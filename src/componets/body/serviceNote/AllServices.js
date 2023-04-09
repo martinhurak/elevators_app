@@ -1,46 +1,66 @@
 import { onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
-import { Accordion, Container, Stack } from "react-bootstrap";
+import { Accordion, Button, Container, Stack } from "react-bootstrap";
+import { Link } from "react-router-dom";
 import { db } from "../../../firebase";
-import "./myCss.css";
+import "./allServices.css";
+
 
 function AllServices() {
   const [databaseData, setDatabaseData] = useState([]);
-  //color lightblue
+
   const showData = databaseData.map((serviceData) => (
     <Accordion key={serviceData.id} defaultActiveKey="1">
       <Accordion.Item eventKey="0">
         <Accordion.Header
           className={serviceData.isCompleted ? "complete" : "not-complete"}
         >
-          <div
-            className="header-content"
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              width: "100% ",
-              padding: "0% 2%",
-            }}
-          >
-            <span style={{ fontWeight: "bold" }}> {serviceData.street}</span>
+          <div className="header-content">
+            <b>
+              {" "}
+              {serviceData.street === "" ? "žiadne dáta" : serviceData.street}
+            </b>
             <span>{serviceData.dateAdded}</span>
           </div>
         </Accordion.Header>
         <Accordion.Body
           className={serviceData.isCompleted ? "complete" : "not-complete"}
         >
-        
-            {/** uprav  skus hodiť na git uvidiš na mobile kde sa ti nejlešie hodi "upraviť butt "*/}
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <b >Problém:</b>
-              <span>{serviceData.timeAdded}</span>
-            </div>
+          <div className="body-header">
             <div>
-              <p>{serviceData.problem}</p>
-              <b>Poznámka :</b>
-              <p>{serviceData.notes}</p>
+              <b>meno:</b>
+              <p>{serviceData.name}</p>
             </div>
-          
+            <span>{serviceData.timeAdded}</span>
+          </div>
+          <div>
+            <b>Problém:</b>
+            <p>
+              {serviceData.problem === "" ? "žiadne dáta" : serviceData.problem}
+            </p>
+            <b>Poznámka :</b>
+            <p>
+              {serviceData.notes === "" ? "žiadne dáta" : serviceData.notes}
+              <Button
+                as={Link}
+                to={{
+                  pathname: "/elevator_app/serviceNote",
+                }}
+                state={{        
+                  id:serviceData.id,
+                  name: serviceData.name,
+                  problem: serviceData.problem,
+                  notes: serviceData.notes,
+                  street: serviceData.street,
+                  isEdited:true,
+                  isCompleted:serviceData.isCompleted
+                }}
+                style={{ float: "right" }}
+              >
+                Upraviť
+              </Button>
+            </p>
+          </div>
         </Accordion.Body>
       </Accordion.Item>
     </Accordion>
@@ -57,7 +77,6 @@ function AllServices() {
       }
     });
   }, []);
-  // console.log(databaseData);
 
   return (
     <>
@@ -71,4 +90,11 @@ function AllServices() {
   );
 }
 export default AllServices;
-// zadať čo sa stane ak niesu data v poli
+
+// upraviť nazov možno aj umiestnenie css // asi ok možno vlastnu zolložku 
+// nazvy premennych
+//co bude napisane ak su polia prazne "" napr ziadne data //ok
+// nemaš meno // ok 
+
+
+// vytvor na novo cele css  dopičeee 
