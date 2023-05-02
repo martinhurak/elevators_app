@@ -17,7 +17,7 @@ function Menu() {
     {
         <Navbar key={"md"} bg="dark" variant="dark" expand={"md"} >
           <Container fluid>
-            <Navbar.Brand as={Link} to="elevator_app" href="#">
+            <Navbar.Brand as={Link} to="elevators_app" href="#">
                Výtahy
             </Navbar.Brand>
             <Navbar.Toggle onClick={()=>setOffCanvasMenu(true)}  aria-controls={`offcanvasNavbar-expand-${"md"}`} />
