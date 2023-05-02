@@ -10,9 +10,9 @@ function App() {
       <BrowserRouter>
         <Menu/>
         <Routes>
-          <Route path="elevator_app" element={<SearchApp />} />
-          <Route path="elevator_app/serviceNote" element={<ServiceNote />} />
-          <Route path="elevator_app/allServices" element={<AllServices  />} />
+          <Route path="elevators_app" element={<SearchApp />} />
+          <Route path="elevators_app/serviceNote" element={<ServiceNote />} />
+          <Route path="elevators_app/allServices" element={<AllServices  />} />
         </Routes>
       </BrowserRouter>
     </>
