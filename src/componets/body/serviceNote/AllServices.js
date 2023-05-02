@@ -106,7 +106,7 @@ function AllServices() {
                   className="button-change"
                   as={Link}
                   to={{
-                    pathname: "/elevators_app/serviceNote",
+                    pathname: "/elevatorss_app/serviceNote",
                   }}
                   state={{
                     id: serviceData.id,
