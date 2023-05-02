@@ -15,7 +15,7 @@ function SendDataNotification(props) {
           <Alert.Heading>{props.isSuccess ? "hotovo":"problém"}</Alert.Heading>
           <h3>{props.isSuccess ? "Úloha bola odoslaná":"Úloha nebola odoslaná"}</h3>
           {props.isSuccess ? " ":<p>Pre dodatočne informacie otvorte dev tools</p>}
-          <div > <Link to="../elevator_App/allServices">do vykonu</Link>  </div> {/*uprav link */}
+          <div > <Link to="../elevators_App/allServices">do vykonu</Link>  </div> {/*uprav link */}
         </Alert>
       </Toast>
     </ToastContainer>
