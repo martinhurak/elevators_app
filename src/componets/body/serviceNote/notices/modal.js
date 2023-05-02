@@ -37,7 +37,7 @@ function SetModal(props) {
       </Modal.Body>
       <Modal.Footer>
         {props.isDeleted ? (
-          <Link to="../elevator_app/allServices">
+          <Link to="../elevators_app/allServices">
             <Button value={"yes"} onClick={(event) => userValidation(event)}>
               Áno
             </Button>
