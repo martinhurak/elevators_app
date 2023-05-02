@@ -15,8 +15,7 @@ import "./newService.css";
 function ServiceNote() {
   // Get the current date and time
   const now = new Date();
-  const date = now.toLocaleDateString();
-  const time = now.toLocaleTimeString();
+  const dateFormat = now.toUTCString()
 
   // Get data to edited
   const location = useLocation();
@@ -38,8 +37,7 @@ function ServiceNote() {
     problem: "",
     notes: "",
     isCompleted: false,
-    dateAdded: date,
-    timeAdded: time,
+    dateAdded: dateFormat, 
   };
 
   // Use state hook to manage the service data object
@@ -59,17 +57,12 @@ function ServiceNote() {
   const buttonIsActive = useRef(false);
   // Function to check whether any required inputs are empty
   function checkEmptyFields() {
-    for (let prop in newService) {
-      if (
-        typeof newService[prop] === "string" &&
-        newService[prop] !== "" &&
-        prop !== "dateAdded" &&
-        prop !== "timeAdded"
-      ) {
-        return (buttonIsActive.current = false);
-      }
+  // this inputs must have value
+    const { name, street, problem, notes } = newService;
+    if (name || street || problem || notes) {
+      return (buttonIsActive.current = true);
     }
-    buttonIsActive.current = true;
+    buttonIsActive.current = false;
   }
   // Call this function on component render
   checkEmptyFields();
@@ -173,7 +166,7 @@ function ServiceNote() {
 
   return (
     <>
-      <Container>
+      <Container className="mt-3">
         <Stack gap={3}>
           <h2 className="mx-auto">
             {isEdited ? "Zmena záznamu" : "Pridaj záznam"}{" "}
@@ -230,18 +223,24 @@ function ServiceNote() {
               />
             </Form.Group>
             <Form.Check
+              className="mb-3"
+              id="switch"
               type="switch"
               checked={newService.isCompleted}
-              label={newService.isCompleted ? "Splnene" : "V spracovani"}
+              label={
+                <Form.Check.Label className="prevent-select" htmlFor="switch">
+                  {newService.isCompleted ? "Splnené" : "V spracovaní"}
+                </Form.Check.Label>
+              }
               onChange={(event) => handleInput(event)}
-            />
+            ></Form.Check>
 
             <Row>
               <Col>
                 <Button
                   style={{ width: "100%" }}
                   type="submit"
-                  disabled={buttonIsActive.current}
+                  disabled={!buttonIsActive.current}
                 >
                   {isEdited ? "Uprav" : "Pridaj záznam"}
                 </Button>

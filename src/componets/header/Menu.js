@@ -15,7 +15,7 @@ function Menu() {
   return (
     <> 
     {
-        <Navbar key={"md"} bg="dark" variant="dark" expand={"md"} className="mb-3">
+        <Navbar key={"md"} bg="dark" variant="dark" expand={"md"} >
           <Container fluid>
             <Navbar.Brand as={Link} to="elevator_app" href="#">
                Výtahy

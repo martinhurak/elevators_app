@@ -7,15 +7,17 @@ function SetModal(props) {
   function userValidation(event) {
     const userChoice = event.target.value;
     if (userChoice === "yes") {
+      console.log(props.isDeleted)
       if (props.isDeleted === true) {
         props.handleDelete();
-        console.log("ok");
       }
-      if (props.isDeleted === false) {
-        props.sendData();
-        props.setValidated(true);
-      }
+
+     else
+       { props.sendData();
+        props.setValidated(true);}
+      
     }
+    
     props.onHide();
     props.setIsDeleted(false);
   }
@@ -54,3 +56,5 @@ function SetModal(props) {
   );
 }
 export default SetModal;
+
+// nefugujuci modal ked raz kliknem nie 
