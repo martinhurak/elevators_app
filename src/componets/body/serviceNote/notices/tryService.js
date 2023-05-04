@@ -1,5 +1,5 @@
 import { onValue, ref } from "firebase/database";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Accordion,
   Button,
@@ -8,12 +8,12 @@ import {
   Pagination,
   Stack,
 } from "react-bootstrap";
-
+import AccordionBody from "react-bootstrap/esm/AccordionBody";
+import AccordionHeader from "react-bootstrap/esm/AccordionHeader";
+import AccordionItem from "react-bootstrap/esm/AccordionItem";
 import { Link } from "react-router-dom";
 import { db } from "../../../firebase";
 import "./allServices.css";
-
-import ThreeDots from "react-loading-icons/dist/esm/components/three-dots";
 
 function AllServices() {
   const [databaseData, setDatabaseData] = useState([]);
@@ -23,6 +23,7 @@ function AllServices() {
       const data = snapshot.val();
       if (data !== null) {
         const dataArray = Object.values(data);
+        //console.log(dataArray)
         const dataFormat = dataArray.sort(
           (date1, date2) =>
             new Date(date2.dateAdded) - new Date(date1.dateAdded)
@@ -30,57 +31,54 @@ function AllServices() {
 
         setDatabaseData(dataFormat);
         setUserData(dataFormat.slice(0, 10));
-        setcategoryData(dataFormat);
       } else {
         setDatabaseData([]);
       }
-      
     });
   }, []);
 
   const [userData, setUserData] = useState(databaseData);
 
-  // hladanie podla kategorie
-
-  const [activeCategory, setActiveCategory] = useState("allCategory");
-  const [categoryData, setcategoryData] = useState(databaseData);
-
-  let [activePage, setActivePage] = useState(1);
-  useEffect(() => {
-    const startIndex = (activePage - 1) * numResults;
-    const endIndex = activePage * numResults;
-    setUserData(categoryData.slice(startIndex, endIndex));
-  }, [activePage, categoryData]);
-
+  // hladanie podla kategorie 
+ // const activeCategory = useRef("allCategory")
+  const [activeCategory,setActiveCategory]= useState("allCategory")
+  const [categoryData,setcategoryData] = useState([])
   const categoryFilter = (selectedCategory) => {
-    if (selectedCategory === "complete") {
-      setcategoryData(databaseData.filter((a) => a.isCompleted === true));
 
-      setActiveCategory("complete");
-    }
-    if (selectedCategory === "inProgress") {
-      setcategoryData(databaseData.filter((a) => a.isCompleted === false));
-
-      setActiveCategory("inProgress");
-    }
-    if (selectedCategory === "allCategory") {
-      setcategoryData(databaseData);
-      setActiveCategory("allCategory");
-    }
-    paginationHandler(1);
-  };
-
+   // setDatabaseData(databaseData.filter((a)=>a.isCompleted === true))
+    if (selectedCategory === "complete")
+   { setUserData(databaseData.filter((a)=>a.isCompleted === true)) 
+    setActiveCategory("complete")
+  }
+   else if(selectedCategory === "inProgress")
+   {setUserData(databaseData.filter((a)=>a.isCompleted === false))
+  setActiveCategory("inProgress") 
+  paginationHandler(1)}
+   else   {
+    setUserData(databaseData)
+    setActiveCategory ("allCategory")
+    paginationHandler(1)
+   }
+    
+  }
+  console.log(activeCategory)
   //pagination
 
+  let [activePage, setActivePage] = useState(1);
   let items = [];
   const numResults = 10;
 
   const paginationHandler = (PageNumber) => {
     setActivePage(PageNumber);
+    const startIndex = (PageNumber - 1) * numResults;
+    const endIndex = PageNumber * numResults;
+    //console.log(startIndex, endIndex);
+    setUserData(databaseData.slice(startIndex, endIndex));
   };
 
-  const totalPages = Math.ceil(categoryData.length / numResults);
+  const totalPages = Math.ceil(databaseData.length / numResults);
   const lastPage = totalPages;
+ // console.log(lastPage)
 
   const paginationStart = activePage === 1 ? 1 : activePage - 1;
   const paginationEnd = activePage === lastPage ? lastPage : activePage + 1;
@@ -102,9 +100,6 @@ function AllServices() {
   }
 
   // uprv stanku ku prvej a poslednej
-
-  //console.log(userData);
-
   const showData = userData.map((serviceData) => {
     const date = new Date(serviceData.dateAdded).toLocaleDateString();
     const time = new Date(serviceData.dateAdded).toLocaleTimeString();
@@ -174,49 +169,22 @@ function AllServices() {
         </AccordionItem>
   </Accordion> */}
       <Container>
-        {" "}
-        {databaseData.length === 0 ? (
-          <div className=" text-center mt-5">
-            {" "}
-            <h1> Načítavam</h1>
-            <ThreeDots style={{ stroke: "black" }} />{" "}
-          </div>
-        ) : (
-          <>
-            <Stack>
-              <h2 className="mx-auto mb-4">Všetky záznamy</h2>
-              <ButtonGroup className="mb-4">
-                <Button
-                  active={activeCategory === "allCategory" ? true : false}
-                  onClick={() => categoryFilter("allCategory")}
-                >
-                  Všetky
-                </Button>
-                <Button
-                  active={activeCategory === "inProgress" ? true : false}
-                  onClick={() => categoryFilter("inProgress")}
-                >
-                  Rozpracované
-                </Button>
-                <Button
-                  active={activeCategory === "complete" ? true : false}
-                  onClick={() => categoryFilter("complete")}
-                >
-                  Hotové
-                </Button>{" "}
-                {/*uprav do funkcie */}
-              </ButtonGroup>
-              {showData}
-            </Stack>
-            <Pagination className="mt-4 pagination justify-content-center">
-              <Pagination.First onClick={() => paginationHandler(1)} />
+        <Stack>
+          <h2 className="mx-auto mb-4">Všetky záznamy</h2>
+          <ButtonGroup className="mb-4">
+            <Button active={activeCategory === "allCategory" ? true : false} onClick={()=>categoryFilter("allCategory")}>Všetky</Button>
+            <Button active={activeCategory === "inProgress" ? true : false} onClick={()=>categoryFilter("inProgress")}>Rozpracované</Button>
+            <Button active={activeCategory === "complete" ? true : false} onClick={()=>categoryFilter("complete")}>Hotové</Button> {/*uprav do funkcie */}
+          </ButtonGroup>
+          {showData}
+        </Stack>
+     {  /* <Pagination className="mt-4 pagination justify-content-center">
+          <Pagination.First onClick={() => paginationHandler(1)} />
 
-              {items}
+          {items}
 
-              <Pagination.Last onClick={() => paginationHandler(lastPage)} />
-            </Pagination>{" "}
-          </>
-        )}
+          <Pagination.Last onClick={() => paginationHandler(lastPage)} />
+</Pagination>*/}
       </Container>
     </>
   );
