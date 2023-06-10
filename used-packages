@@ -4,3 +4,5 @@ npm i uid
 npm i react-router-dom
 npm i react-router
 npm i bootstrap
+npm i react-to-print
+npm i react-loading-icons

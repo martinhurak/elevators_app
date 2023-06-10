@@ -1,0 +1,58 @@
+/* {border: solid  black 2px;}*/
+
+
+
+.time-sheet {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(8, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px; 
+    padding: 20px  10px;
+    }
+    
+    .general-info { grid-area: 1 / 1 / 2 / 5; }
+    .work-description { grid-area: 2 / 1 / 3 / 5; }
+    .additional-info { grid-area: 1 / 5 / 3 / 7; }
+    .work-list { grid-area: 3 / 1 / 5 / 7; }
+    .material-list { grid-area: 5 / 1 / 7 / 7; }
+    .employees-name { grid-area: 7 / 1 / 9 / 4; }
+    .transport { grid-area: 7 / 4 / 9 / 7; }
+
+    .general-info{
+        outline: solid 1px black;
+        display: flex;
+        padding: 10px;
+    }
+
+    .genaral-info-required,
+    .genaral-info-additional{
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+    }
+    .genaral-info-additional{
+        justify-content: space-between;
+    }
+
+    .additional-info-title{
+        font-size: 24px;
+        letter-spacing: 2px;
+        line-height: 20px;
+        font-weight: 800;
+    }
+    .additional-info{
+        margin-left: 10px;
+        word-wrap: break-word;
+    }
+
+    .additional-info-text{
+      
+        padding: 10px 10px;
+        font-size: 11px;
+    }
+    .additional-info-text > span{
+        display: inline-block;
+        width: 100%;
+       text-align: center;
+    }

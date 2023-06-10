@@ -44,6 +44,7 @@ function Menu() {
 
                   </NavDropdown>   
                   <Nav.Link onClick={()=> setOffCanvasMenu(false)} as={Link} to="elevators_app" > Vyhladavnie</Nav.Link>
+                  <Nav.Link onClick={()=> setOffCanvasMenu(false)} as={Link} to="elevators_app/pracovnyVykaz" > Pracovný vykaz</Nav.Link>
                 </Nav>
                 <Outlet/>
                 <Form className="d-flex">
