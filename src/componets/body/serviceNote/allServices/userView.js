@@ -7,6 +7,8 @@ function UserView(props) {
 
   const [openNotes, setOpenNotes] = useState([]);
 
+  let isMobile = /iPhone|iPad|iPod|Android|Windows Phone/.test(navigator.userAgent);
+
   return props.userData.map((serviceData, index) => {
     const date = new Date(serviceData.dateAdded).toLocaleDateString();
     const time = new Date(serviceData.dateAdded).toLocaleTimeString();
@@ -14,8 +16,11 @@ function UserView(props) {
     const maxWordLength = 12;
     const fullStreetName = serviceData.street
 
+
+
+
     const displayedStreet = openNotes && openNotes.some((obj) => obj.isOpen === index)
-        ? fullStreetName: fullStreetName.length > maxWordLength && window.innerWidth < 350
+        ? fullStreetName: fullStreetName.length > maxWordLength && isMobile
         ? fullStreetName.substring(0, maxWordLength) + "...": fullStreetName;
 
     return (
