@@ -1,8 +1,14 @@
 clean-up-react-app
+
 npm i firebase 
 npm i uid 
+
 npm i react-router-dom
 npm i react-router
+
 npm i bootstrap
 npm i react-to-print
-npm i react-loading-icons
+
+npm i react-loading-icons 
+npm i fontawesome/react-fontawesome
+npm i @fortawesome/free-solid-svg-icons

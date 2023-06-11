@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Container, Stack } from "react-bootstrap";
+import { Container, FormCheck, FormGroup, Stack } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
@@ -15,21 +15,20 @@ import "./newService.css";
 function ServiceNote() {
   // Get the current date and time
   const now = new Date();
-  const dateFormat = now.toUTCString()
+  const dateFormat = now.toUTCString();
 
   // Get data to edited
   const location = useLocation();
-  const { id, name, street, problem, notes, isEdited, isCompleted } =
+  const { id, name, street, problem, notes, isEdited, isCompleted, workLog } =
     location.state;
+  const initialWorkLog =
+    location.state.workLog !== undefined
+      ? { isActive: workLog.isActive, finalizedLog: workLog.finalizedLog }
+      : { isActive: false, finalizedLog: false }; // neviem prčo to tak ide
   // Define initial state
-  const updatedData = {
-    id: id,
-    name: name,
-    street: street,
-    problem: problem,
-    notes: notes,
-    isCompleted: isCompleted,
-  };
+
+  console.log(location.state.workLog);
+
   const initialServiceData = {
     id: "",
     name: "",
@@ -37,18 +36,34 @@ function ServiceNote() {
     problem: "",
     notes: "",
     isCompleted: false,
-    dateAdded: dateFormat, 
+    dateAdded: dateFormat,
+    workLog: { isActive: false, finalizedLog: false },
+  };
+  console.log(workLog);
+  const updatedData = {
+    id: id,
+    name: name,
+    street: street,
+    problem: problem,
+    notes: notes,
+    isCompleted: isCompleted, // potom predpriprav update data
+    workLog: { isActive: initialWorkLog.isActive, finalizedLog: initialWorkLog.finalizedLog },
+    // workLog: { isActive:workLog.isActive, finalizedLog: workLog.finalizedLog },
   };
 
   // Use state hook to manage the service data object
   const [newService, setNewService] = useState(initialServiceData);
 
+  //console.log(newService);
+
   //Set initial state based on user input
   useEffect(() => {
     if (isEdited === true) {
+      console.log("ok");
       setNewService(updatedData);
     } else {
       setNewService(initialServiceData);
+      console.log("nok");
     }
     // eslint-disable-next-line
   }, [isEdited]);
@@ -57,7 +72,7 @@ function ServiceNote() {
   const buttonIsActive = useRef(false);
   // Function to check whether any required inputs are empty
   function checkEmptyFields() {
-  // this inputs must have value
+    // this inputs must have value
     const { name, street, problem, notes } = newService;
     if (name || street || problem || notes) {
       return (buttonIsActive.current = true);
@@ -69,18 +84,33 @@ function ServiceNote() {
 
   // Function to update the service data object as the user types
   function handleInput(event) {
-    const name = event.target.name;
-    const value = event.target.value;
-    const type = event.target.type;
-    const checked = event.target.checked;
-
-    setNewService((oldVal) =>
-      type === "checkbox"
-        ? { ...oldVal, isCompleted: checked }
-        : { ...oldVal, [name]: value }
-    );
+    const { name, value, type, checked, id } = event.target;
+    //console.log(name);
+    setNewService((oldVal) => {
+      if (type === "checkbox") {
+        return id === "switch"
+          ? { ...oldVal, isCompleted: checked }
+          : { ...oldVal, workLog: { ...oldVal.workLog, [name]: checked } };
+      } else {
+        return { ...oldVal, [name]: value };
+      }
+    });
   }
-
+  //
+  /*
+        if (id === "switch") {
+          return { ...oldVal, isCompleted: checked };
+        }
+        else{
+          return {...oldVal,workLog:{ ...oldVal.workLog, [name]:checked}}
+        }*/
+  /*
+      type === "checkbox"
+        ? id === "switch"
+          ? { ...oldVal, isCompleted: checked }
+          : { ...oldVal, workLog: { isActive: checked } }
+        : { ...oldVal, [name]: value }*/
+  //
   // set validation message
   const [dataNotification, setDataNotification] = useState({
     show: false,
@@ -234,7 +264,47 @@ function ServiceNote() {
               }
               onChange={(event) => handleInput(event)}
             ></Form.Check>
-
+            <Row>
+              <FormGroup as={Col} md="3" className="col-6">
+                <FormCheck
+                  type="checkBox"
+                  id="workLogSwitch"
+                  name="isActive"
+                  checked={newService.workLog.isActive}
+                  onChange={(event) => handleInput(event)}
+                  label={
+                    <Form.Check.Label
+                      className="prevent-select"
+                      htmlFor="workLogSwitch"
+                    >
+                      {"Výkaz práce"}
+                    </Form.Check.Label>
+                  }
+                ></FormCheck>
+              </FormGroup>
+              {newService.workLog.isActive ? (
+                <FormGroup as={Col} md="3" className="col-6">
+                  <FormCheck
+                    className="finalized-log-switch"
+                    type="switch"
+                    id="finalizedLogSwitch"
+                    name="finalizedLog"
+                    checked={newService.workLog.finalizedLog}
+                    onChange={(event) => handleInput(event)}
+                    label={
+                      <Form.Check.Label
+                        className="prevent-select"
+                        htmlFor="finalizedLogSwitch"
+                      >
+                        {newService.workLog.finalizedLog
+                          ? "zapísané"
+                          : "nezapísané"}
+                      </Form.Check.Label>
+                    }
+                  ></FormCheck>
+                </FormGroup>
+              ) : undefined}
+            </Row>
             <Row>
               <Col>
                 <Button
@@ -282,4 +352,5 @@ function ServiceNote() {
 
 export default ServiceNote;
 
-
+//zelena 17
+// stale bucha
